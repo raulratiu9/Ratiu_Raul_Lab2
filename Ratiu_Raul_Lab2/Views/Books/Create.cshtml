@@ -13,9 +13,8 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Author" class="control-label"></label>
-                <select asp-for="Author" class="form-control" asp-items="ViewBag.AuthorID"></select>
-                <span asp-validation-for="Author" class="text-danger"></span>
+                <label asp-for="AuthorID" class="control-label"></label>
+                <select asp-for="AuthorID" class ="form-control" asp-items="ViewBag.AuthorID"></select>
             </div>
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>

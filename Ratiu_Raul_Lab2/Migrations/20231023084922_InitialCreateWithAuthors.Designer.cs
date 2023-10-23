@@ -12,8 +12,8 @@ using Ratiu_Raul_Lab2.Data;
 namespace Ratiu_Raul_Lab2.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    [Migration("20231020153315_newRows")]
-    partial class newRows
+    [Migration("20231023084922_InitialCreateWithAuthors")]
+    partial class InitialCreateWithAuthors
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,9 +33,6 @@ namespace Ratiu_Raul_Lab2.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int>("BookID")
-                        .HasColumnType("int");
-
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -45,8 +42,6 @@ namespace Ratiu_Raul_Lab2.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("BookID");
 
                     b.ToTable("Author", (string)null);
                 });
@@ -70,6 +65,8 @@ namespace Ratiu_Raul_Lab2.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("AuthorID");
 
                     b.ToTable("Book", (string)null);
                 });
@@ -121,15 +118,15 @@ namespace Ratiu_Raul_Lab2.Migrations
                     b.ToTable("Order", (string)null);
                 });
 
-            modelBuilder.Entity("Ratiu_Raul_Lab2.Models.Author", b =>
+            modelBuilder.Entity("Ratiu_Raul_Lab2.Models.Book", b =>
                 {
-                    b.HasOne("Ratiu_Raul_Lab2.Models.Book", "Book")
-                        .WithMany("Authors")
-                        .HasForeignKey("BookID")
+                    b.HasOne("Ratiu_Raul_Lab2.Models.Author", "Author")
+                        .WithMany("Book")
+                        .HasForeignKey("AuthorID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Book");
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("Ratiu_Raul_Lab2.Models.Order", b =>
@@ -151,10 +148,13 @@ namespace Ratiu_Raul_Lab2.Migrations
                     b.Navigation("Customer");
                 });
 
+            modelBuilder.Entity("Ratiu_Raul_Lab2.Models.Author", b =>
+                {
+                    b.Navigation("Book");
+                });
+
             modelBuilder.Entity("Ratiu_Raul_Lab2.Models.Book", b =>
                 {
-                    b.Navigation("Authors");
-
                     b.Navigation("Orders");
                 });
 

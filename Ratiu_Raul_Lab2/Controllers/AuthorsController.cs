@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Ratiu_Raul_Lab2.Data;
 using Ratiu_Raul_Lab2.Models;
@@ -17,9 +22,9 @@ namespace Ratiu_Raul_Lab2.Controllers
         // GET: Authors
         public async Task<IActionResult> Index()
         {
-            return _context.Authors != null ?
-                        View(await _context.Authors.ToListAsync()) :
-                        Problem("Entity set 'LibraryContext.Authors' is null.");
+              return _context.Authors != null ? 
+                          View(await _context.Authors.ToListAsync()) :
+                          Problem("Entity set 'LibraryContext.Authors'  is null.");
         }
 
         // GET: Authors/Details/5
@@ -145,14 +150,14 @@ namespace Ratiu_Raul_Lab2.Controllers
             {
                 _context.Authors.Remove(author);
             }
-
+            
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool AuthorExists(int id)
         {
-            return (_context.Authors?.Any(e => e.ID == id)).GetValueOrDefault();
+          return (_context.Authors?.Any(e => e.ID == id)).GetValueOrDefault();
         }
     }
 }

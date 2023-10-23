@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Ratiu_Raul_Lab2.Data;
@@ -18,9 +22,8 @@ namespace Ratiu_Raul_Lab2.Controllers
         // GET: Books
         public async Task<IActionResult> Index()
         {
-            return _context.Books != null ?
-                        View(await _context.Books.ToListAsync()) :
-                        Problem("Entity set 'LibraryContext.Books'  is null.");
+            var libraryContext = _context.Books.Include(b => b.Author);
+            return View(await libraryContext.ToListAsync());
         }
 
         // GET: Books/Details/5
@@ -32,6 +35,7 @@ namespace Ratiu_Raul_Lab2.Controllers
             }
 
             var book = await _context.Books
+                .Include(b => b.Author)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (book == null)
             {
@@ -44,7 +48,7 @@ namespace Ratiu_Raul_Lab2.Controllers
         // GET: Books/Create
         public IActionResult Create()
         {
-            ViewBag.AuthorID = new SelectList(_context.Authors.ToList(), "ID", "LastName");
+            ViewData["AuthorID"] = new SelectList(_context.Authors, "ID", "ID");
             return View();
         }
 
@@ -61,6 +65,7 @@ namespace Ratiu_Raul_Lab2.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["AuthorID"] = new SelectList(_context.Authors, "ID", "ID", book.AuthorID);
             return View(book);
         }
 
@@ -77,6 +82,7 @@ namespace Ratiu_Raul_Lab2.Controllers
             {
                 return NotFound();
             }
+            ViewData["AuthorID"] = new SelectList(_context.Authors, "ID", "ID", book.AuthorID);
             return View(book);
         }
 
@@ -112,6 +118,7 @@ namespace Ratiu_Raul_Lab2.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["AuthorID"] = new SelectList(_context.Authors, "ID", "ID", book.AuthorID);
             return View(book);
         }
 
@@ -124,6 +131,7 @@ namespace Ratiu_Raul_Lab2.Controllers
             }
 
             var book = await _context.Books
+                .Include(b => b.Author)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (book == null)
             {
@@ -147,14 +155,14 @@ namespace Ratiu_Raul_Lab2.Controllers
             {
                 _context.Books.Remove(book);
             }
-
+            
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool BookExists(int id)
         {
-            return (_context.Books?.Any(e => e.ID == id)).GetValueOrDefault();
+          return (_context.Books?.Any(e => e.ID == id)).GetValueOrDefault();
         }
     }
 }
