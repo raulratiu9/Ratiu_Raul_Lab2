@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Ratiu_Raul_Lab2.Data;
@@ -23,12 +19,17 @@ namespace Ratiu_Raul_Lab2.Controllers
         public async Task<IActionResult> Index()
         {
             var libraryContext = _context.Books.Include(b => b.Author);
+            var authorFullName = _context.Authors.Select(x => x.LastName + " " + x.FirstName);
+            ViewData["AuthorID"] = new SelectList(authorFullName);
             return View(await libraryContext.ToListAsync());
         }
 
         // GET: Books/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            var authorFullName = _context.Authors.Select(x => x.LastName + " " + x.FirstName);
+            ViewData["AuthorID"] = new SelectList(authorFullName);
+
             if (id == null || _context.Books == null)
             {
                 return NotFound();
@@ -48,7 +49,8 @@ namespace Ratiu_Raul_Lab2.Controllers
         // GET: Books/Create
         public IActionResult Create()
         {
-            ViewData["AuthorID"] = new SelectList(_context.Authors, "ID", "ID");
+            var authorFullName = _context.Authors.Select(x => x.LastName + " " + x.FirstName);
+            ViewData["AuthorID"] = new SelectList(authorFullName);
             return View();
         }
 
@@ -59,19 +61,23 @@ namespace Ratiu_Raul_Lab2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,AuthorID,Title,Price")] Book book)
         {
+            var authorFullName = _context.Authors.Select(x => x.LastName + " " + x.FirstName);
+            ViewData["AuthorID"] = new SelectList(authorFullName);
             if (ModelState.IsValid)
             {
                 _context.Add(book);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AuthorID"] = new SelectList(_context.Authors, "ID", "ID", book.AuthorID);
+
             return View(book);
         }
 
         // GET: Books/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            var authorFullName = _context.Authors.Select(x => x.LastName + " " + x.FirstName);
+            ViewData["AuthorID"] = new SelectList(authorFullName);
             if (id == null || _context.Books == null)
             {
                 return NotFound();
@@ -82,7 +88,7 @@ namespace Ratiu_Raul_Lab2.Controllers
             {
                 return NotFound();
             }
-            ViewData["AuthorID"] = new SelectList(_context.Authors, "ID", "ID", book.AuthorID);
+
             return View(book);
         }
 
@@ -93,6 +99,8 @@ namespace Ratiu_Raul_Lab2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,AuthorID,Title,Price")] Book book)
         {
+            var authorFullName = _context.Authors.Select(x => x.LastName + " " + x.FirstName);
+            ViewData["AuthorID"] = new SelectList(authorFullName);
             if (id != book.ID)
             {
                 return NotFound();
@@ -118,13 +126,16 @@ namespace Ratiu_Raul_Lab2.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AuthorID"] = new SelectList(_context.Authors, "ID", "ID", book.AuthorID);
+
             return View(book);
         }
 
         // GET: Books/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            var authorFullName = _context.Authors.Select(x => x.LastName + " " + x.FirstName);
+            ViewData["AuthorID"] = new SelectList(authorFullName);
+
             if (id == null || _context.Books == null)
             {
                 return NotFound();
@@ -146,6 +157,9 @@ namespace Ratiu_Raul_Lab2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var authorFullName = _context.Authors.Select(x => x.LastName + " " + x.FirstName);
+            ViewData["AuthorID"] = new SelectList(authorFullName);
+
             if (_context.Books == null)
             {
                 return Problem("Entity set 'LibraryContext.Books'  is null.");
@@ -155,14 +169,14 @@ namespace Ratiu_Raul_Lab2.Controllers
             {
                 _context.Books.Remove(book);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool BookExists(int id)
         {
-          return (_context.Books?.Any(e => e.ID == id)).GetValueOrDefault();
+            return (_context.Books?.Any(e => e.ID == id)).GetValueOrDefault();
         }
     }
 }

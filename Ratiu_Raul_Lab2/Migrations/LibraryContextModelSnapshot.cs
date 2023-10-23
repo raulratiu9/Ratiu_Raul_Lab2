@@ -51,7 +51,7 @@ namespace Ratiu_Raul_Lab2.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int>("AuthorID")
+                    b.Property<int?>("AuthorID")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
@@ -119,9 +119,7 @@ namespace Ratiu_Raul_Lab2.Migrations
                 {
                     b.HasOne("Ratiu_Raul_Lab2.Models.Author", "Author")
                         .WithMany("Book")
-                        .HasForeignKey("AuthorID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AuthorID");
 
                     b.Navigation("Author");
                 });
