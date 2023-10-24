@@ -63,7 +63,7 @@ namespace Ratiu_Raul_Lab2.Controllers
             var authorFullName = _context.Authors.Select(x => x.LastName + " " + x.FirstName);
             ViewData["AuthorID"] = new SelectList(authorFullName);
 
-            return View(await PaginatedList<Book>.CreateAsync(books.AsNoTracking(), pageNumber ??
+            return View(await PaginatedList<Book>.CreateAsync(books.Include(b => b.Author).AsNoTracking(), pageNumber ??
            1, pageSize));
 
         }
@@ -80,6 +80,7 @@ namespace Ratiu_Raul_Lab2.Controllers
             }
 
             var book = await _context.Books
+                .Include(b => b.Author)
                 .Include(s => s.Orders)
                 .ThenInclude(e => e.Customer)
                 .AsNoTracking()
