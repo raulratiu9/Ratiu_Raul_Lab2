@@ -3,17 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Ratiu_Raul_Lab2.Data;
 
 #nullable disable
 
-namespace Ratiu_Raul_Lab2.Migrations
+namespace LibraryWebAPI.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    partial class LibraryContextModelSnapshot : ModelSnapshot
+    [Migration("20231027170352_UpdateCustomerModel")]
+    partial class UpdateCustomerModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,7 +39,7 @@ namespace Ratiu_Raul_Lab2.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("City");
+                    b.ToTable("City", (string)null);
                 });
 
             modelBuilder.Entity("Ratiu_Raul_Lab2.Models.Author", b =>
@@ -101,6 +104,7 @@ namespace Ratiu_Raul_Lab2.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("CityID")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     b.Property<string>("Name")

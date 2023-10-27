@@ -107,7 +107,7 @@ namespace Ratiu_Raul_Lab2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,Author,Price")] Book book)
+        public async Task<IActionResult> Create([Bind("Title,AuthorID,Price")] Book book)
         {
             try
             {

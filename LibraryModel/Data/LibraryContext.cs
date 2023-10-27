@@ -1,5 +1,4 @@
-﻿using LibraryModel.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Ratiu_Raul_Lab2.Models;
 
 namespace Ratiu_Raul_Lab2.Data
@@ -15,8 +14,6 @@ namespace Ratiu_Raul_Lab2.Data
         public DbSet<Author> Authors { get; set; }
         public DbSet<Publisher> Publishers { get; set; }
         public DbSet<PublishedBook> PublishedBooks { get; set; }
-        public DbSet<City> Cities { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Customer>().ToTable("Customer");
@@ -25,7 +22,6 @@ namespace Ratiu_Raul_Lab2.Data
             modelBuilder.Entity<Author>().ToTable("Author");
             modelBuilder.Entity<Publisher>().ToTable("Publisher");
             modelBuilder.Entity<PublishedBook>().ToTable("PublishedBook");
-            modelBuilder.Entity<City>().ToTable("City");
             modelBuilder.Entity<PublishedBook>()
             .HasKey(c => new { c.BookID, c.PublisherID });//configureaza cheia primara compusa
         }
