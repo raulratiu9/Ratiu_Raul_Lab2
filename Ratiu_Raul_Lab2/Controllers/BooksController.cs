@@ -67,13 +67,11 @@ namespace Ratiu_Raul_Lab2.Controllers
            1, pageSize));
 
         }
-
         // GET: Books/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             var authorFullName = _context.Authors.Select(x => x.LastName + " " + x.FirstName);
             ViewData["AuthorID"] = new SelectList(authorFullName);
-
             if (id == null || _context.Books == null)
             {
                 return NotFound();
@@ -89,7 +87,6 @@ namespace Ratiu_Raul_Lab2.Controllers
             {
                 return NotFound();
             }
-
 
             return View(book);
         }
@@ -107,21 +104,16 @@ namespace Ratiu_Raul_Lab2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,AuthorID,Price")] Book book)
+        public async Task<IActionResult> Create([Bind("ID,AuthorID,Title,Price")] Book book)
         {
-            try
+            var authorFullName = _context.Authors.Select(x => x.LastName + " " + x.FirstName);
+            ViewData["AuthorID"] = new SelectList(authorFullName, book.AuthorID);
+            if (ModelState.IsValid)
             {
-                var authorFullName = _context.Authors.Select(x => x.LastName + " " + x.FirstName);
-                ViewData["AuthorID"] = new SelectList(authorFullName);
-                if (ModelState.IsValid)
-                {
-                    _context.Add(book);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
+                _context.Add(book);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            catch (DbUpdateException /* ex*/) { ModelState.AddModelError("", "Unable to save changes. " + "Try again, and if the problem persists "); }
-
             return View(book);
         }
 
@@ -140,41 +132,45 @@ namespace Ratiu_Raul_Lab2.Controllers
             {
                 return NotFound();
             }
-
+            ViewData["AuthorID"] = new SelectList(_context.Authors, "ID", "FirstName", book.AuthorID);
             return View(book);
         }
 
         // POST: Books/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost, ActionName("Edit")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditPost(int? id)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,AuthorID,Title,Price")] Book book)
         {
-            if (id == null)
+            if (id != book.ID)
             {
                 return NotFound();
             }
-            var bookToUpdate = await _context.Books.FirstOrDefaultAsync(s => s.ID == id);
+
             var authorFullName = _context.Authors.Select(x => x.LastName + " " + x.FirstName);
             ViewData["AuthorID"] = new SelectList(authorFullName);
-            if (await TryUpdateModelAsync<Book>(
-                bookToUpdate,
-                "",
-                s => s.Author, s => s.Title, s => s.Price))
             {
                 try
                 {
+                    _context.Update(book);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateException /* ex */)
+                catch (DbUpdateConcurrencyException)
                 {
-                    ModelState.AddModelError("", "Unable to save changes. " +
-                        "Try again, and if the problem persists");
+                    if (!BookExists(book.ID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
+                return RedirectToAction(nameof(Index));
             }
-            return View(bookToUpdate);
+            ViewData["AuthorID"] = new SelectList(_context.Authors, "ID", "FirstName", book.AuthorID);
+            return View(book);
         }
 
         // GET: Books/Delete/5
@@ -182,7 +178,6 @@ namespace Ratiu_Raul_Lab2.Controllers
         {
             var authorFullName = _context.Authors.Select(x => x.LastName + " " + x.FirstName);
             ViewData["AuthorID"] = new SelectList(authorFullName);
-
             if (id == null || _context.Books == null)
             {
                 return NotFound();
@@ -201,7 +196,6 @@ namespace Ratiu_Raul_Lab2.Controllers
             {
                 ViewData["ErrorMessage"] = "Delete failed. Try again";
             }
-
             return View(book);
         }
 
@@ -212,24 +206,18 @@ namespace Ratiu_Raul_Lab2.Controllers
         {
             var authorFullName = _context.Authors.Select(x => x.LastName + " " + x.FirstName);
             ViewData["AuthorID"] = new SelectList(authorFullName);
-
             if (_context.Books == null)
             {
                 return Problem("Entity set 'LibraryContext.Books'  is null.");
             }
             var book = await _context.Books.FindAsync(id);
-            if (book == null) { return RedirectToAction(nameof(Index)); }
-            try
+            if (book != null)
             {
                 _context.Books.Remove(book);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
             }
-            catch (DbUpdateException /* ex */)
-            {
 
-                return RedirectToAction(nameof(Delete), new { id = id, saveChangesError = true });
-            }
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         private bool BookExists(int id)
