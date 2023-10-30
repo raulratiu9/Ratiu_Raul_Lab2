@@ -64,7 +64,6 @@ namespace Ratiu_Raul_Lab2.Controllers
         {
             ViewData["CityID"] = new SelectList(_context.Cities, "ID", "CityName");
 
-            if (!ModelState.IsValid) return View(customer);
             try
             {
                 var client = new HttpClient();
@@ -86,49 +85,39 @@ namespace Ratiu_Raul_Lab2.Controllers
         public async Task<ActionResult> Edit(int? id)
         {
             ViewData["CityID"] = new SelectList(_context.Cities, "ID", "CityName");
-            if (id == null || _context.Customers == null)
-            {
-                return NotFound();
-            }
 
-            var customer = await _context.Customers.FindAsync(id);
-            if (customer == null)
+            if (id == null)
             {
-                return NotFound();
+                return new BadRequestResult();
             }
+            var client = new HttpClient();
+            var response = await client.GetAsync($"{_baseUrl}/{id.Value}");
+            if (response.IsSuccessStatusCode)
+            {
+                var customer = JsonConvert.DeserializeObject<Customer>(
+                await response.Content.ReadAsStringAsync());
+                return View(customer);
+            }
+            return new NotFoundResult();
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Edit([Bind("CustomerID,Name,Adress,BirthDate,CityID")]
+Customer customer)
+        {
+            if (!ModelState.IsValid) return View(customer);
+            var client = new HttpClient();
+            string json = JsonConvert.SerializeObject(customer);
+            var response = await client.PutAsync($"{_baseUrl}/{customer.CustomerID}",
+            new StringContent(json, Encoding.UTF8, "application/json"));
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction("Index");
+            }
             return View(customer);
         }
 
-        [HttpPost, ActionName("Edit")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditPost(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            var customerToUpdate = await _context.Customers.FirstOrDefaultAsync(s => s.CustomerID == id);
-            ViewData["CityID"] = new SelectList(_context.Cities, "ID", "CityName");
-
-            if (await TryUpdateModelAsync<Customer>(
-                customerToUpdate,
-                "",
-                s => s.Name, s => s.Adress, s => s.BirthDate, s => s.City))
-            {
-                try
-                {
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (DbUpdateException /* ex */)
-                {
-                    ModelState.AddModelError("", "Unable to save changes. " +
-                        "Try again, and if the problem persists");
-                }
-            }
-            return View(customerToUpdate);
-        }
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)

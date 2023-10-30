@@ -2,10 +2,10 @@
 
 #nullable disable
 
-namespace Ratiu_Raul_Lab2.Migrations
+namespace LibraryWebAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class AddCitiesToDBSet : Migration
+    public partial class EraseNullable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

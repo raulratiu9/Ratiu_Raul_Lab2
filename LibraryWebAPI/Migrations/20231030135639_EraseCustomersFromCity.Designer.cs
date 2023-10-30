@@ -12,8 +12,8 @@ using Ratiu_Raul_Lab2.Data;
 namespace LibraryWebAPI.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    [Migration("20231027170352_UpdateCustomerModel")]
-    partial class UpdateCustomerModel
+    [Migration("20231030135639_EraseCustomersFromCity")]
+    partial class EraseCustomersFromCity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -103,7 +103,7 @@ namespace LibraryWebAPI.Migrations
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("CityID")
+                    b.Property<int>("CityID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
@@ -196,8 +196,10 @@ namespace LibraryWebAPI.Migrations
             modelBuilder.Entity("Ratiu_Raul_Lab2.Models.Customer", b =>
                 {
                     b.HasOne("LibraryModel.Models.City", "City")
-                        .WithMany("Customers")
-                        .HasForeignKey("CityID");
+                        .WithMany()
+                        .HasForeignKey("CityID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("City");
                 });
@@ -238,11 +240,6 @@ namespace LibraryWebAPI.Migrations
                     b.Navigation("Book");
 
                     b.Navigation("Publisher");
-                });
-
-            modelBuilder.Entity("LibraryModel.Models.City", b =>
-                {
-                    b.Navigation("Customers");
                 });
 
             modelBuilder.Entity("Ratiu_Raul_Lab2.Models.Author", b =>

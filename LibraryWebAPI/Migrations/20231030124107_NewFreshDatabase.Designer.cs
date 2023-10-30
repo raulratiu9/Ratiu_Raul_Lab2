@@ -9,11 +9,11 @@ using Ratiu_Raul_Lab2.Data;
 
 #nullable disable
 
-namespace Ratiu_Raul_Lab2.Migrations
+namespace LibraryWebAPI.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    [Migration("20231026165718_AddCityToCustomer")]
-    partial class AddCityToCustomer
+    [Migration("20231030124107_NewFreshDatabase")]
+    partial class NewFreshDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,7 +39,7 @@ namespace Ratiu_Raul_Lab2.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("City");
+                    b.ToTable("City", (string)null);
                 });
 
             modelBuilder.Entity("Ratiu_Raul_Lab2.Models.Author", b =>
@@ -103,7 +103,8 @@ namespace Ratiu_Raul_Lab2.Migrations
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("CityID")
+                    b.Property<int>("CityID")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -196,7 +197,9 @@ namespace Ratiu_Raul_Lab2.Migrations
                 {
                     b.HasOne("LibraryModel.Models.City", "City")
                         .WithMany("Customers")
-                        .HasForeignKey("CityID");
+                        .HasForeignKey("CityID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("City");
                 });

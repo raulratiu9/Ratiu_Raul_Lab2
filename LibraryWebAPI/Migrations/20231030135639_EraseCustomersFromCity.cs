@@ -2,10 +2,10 @@
 
 #nullable disable
 
-namespace Ratiu_Raul_Lab2.Migrations
+namespace LibraryWebAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class AddCityidToCustomer : Migration
+    public partial class EraseCustomersFromCity : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

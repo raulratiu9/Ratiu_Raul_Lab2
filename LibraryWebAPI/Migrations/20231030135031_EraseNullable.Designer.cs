@@ -9,11 +9,11 @@ using Ratiu_Raul_Lab2.Data;
 
 #nullable disable
 
-namespace Ratiu_Raul_Lab2.Migrations
+namespace LibraryWebAPI.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    [Migration("20231023142602_AddOrderDateToOrders")]
-    partial class AddOrderDateToOrders
+    [Migration("20231030135031_EraseNullable")]
+    partial class EraseNullable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,23 @@ namespace Ratiu_Raul_Lab2.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("LibraryModel.Models.City", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("CityName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("City", (string)null);
+                });
 
             modelBuilder.Entity("Ratiu_Raul_Lab2.Models.Author", b =>
                 {
@@ -54,11 +71,11 @@ namespace Ratiu_Raul_Lab2.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int?>("AuthorID")
+                    b.Property<int>("AuthorID")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(6, 2)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -86,11 +103,17 @@ namespace Ratiu_Raul_Lab2.Migrations
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("CityID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("CustomerID");
+
+                    b.HasIndex("CityID");
 
                     b.ToTable("Customer", (string)null);
                 });
@@ -121,13 +144,64 @@ namespace Ratiu_Raul_Lab2.Migrations
                     b.ToTable("Order", (string)null);
                 });
 
+            modelBuilder.Entity("Ratiu_Raul_Lab2.Models.PublishedBook", b =>
+                {
+                    b.Property<int>("BookID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PublisherID")
+                        .HasColumnType("int");
+
+                    b.HasKey("BookID", "PublisherID");
+
+                    b.HasIndex("PublisherID");
+
+                    b.ToTable("PublishedBook", (string)null);
+                });
+
+            modelBuilder.Entity("Ratiu_Raul_Lab2.Models.Publisher", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("Adress")
+                        .IsRequired()
+                        .HasMaxLength(70)
+                        .HasColumnType("nvarchar(70)");
+
+                    b.Property<string>("PublisherName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Publisher", (string)null);
+                });
+
             modelBuilder.Entity("Ratiu_Raul_Lab2.Models.Book", b =>
                 {
                     b.HasOne("Ratiu_Raul_Lab2.Models.Author", "Author")
                         .WithMany("Book")
-                        .HasForeignKey("AuthorID");
+                        .HasForeignKey("AuthorID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("Ratiu_Raul_Lab2.Models.Customer", b =>
+                {
+                    b.HasOne("LibraryModel.Models.City", "City")
+                        .WithMany("Customers")
+                        .HasForeignKey("CityID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("City");
                 });
 
             modelBuilder.Entity("Ratiu_Raul_Lab2.Models.Order", b =>
@@ -149,6 +223,30 @@ namespace Ratiu_Raul_Lab2.Migrations
                     b.Navigation("Customer");
                 });
 
+            modelBuilder.Entity("Ratiu_Raul_Lab2.Models.PublishedBook", b =>
+                {
+                    b.HasOne("Ratiu_Raul_Lab2.Models.Book", "Book")
+                        .WithMany("PublishedBooks")
+                        .HasForeignKey("BookID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Ratiu_Raul_Lab2.Models.Publisher", "Publisher")
+                        .WithMany("PublishedBooks")
+                        .HasForeignKey("PublisherID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Publisher");
+                });
+
+            modelBuilder.Entity("LibraryModel.Models.City", b =>
+                {
+                    b.Navigation("Customers");
+                });
+
             modelBuilder.Entity("Ratiu_Raul_Lab2.Models.Author", b =>
                 {
                     b.Navigation("Book");
@@ -157,11 +255,18 @@ namespace Ratiu_Raul_Lab2.Migrations
             modelBuilder.Entity("Ratiu_Raul_Lab2.Models.Book", b =>
                 {
                     b.Navigation("Orders");
+
+                    b.Navigation("PublishedBooks");
                 });
 
             modelBuilder.Entity("Ratiu_Raul_Lab2.Models.Customer", b =>
                 {
                     b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("Ratiu_Raul_Lab2.Models.Publisher", b =>
+                {
+                    b.Navigation("PublishedBooks");
                 });
 #pragma warning restore 612, 618
         }

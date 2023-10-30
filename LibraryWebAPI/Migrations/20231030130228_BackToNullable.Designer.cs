@@ -9,11 +9,11 @@ using Ratiu_Raul_Lab2.Data;
 
 #nullable disable
 
-namespace Ratiu_Raul_Lab2.Migrations
+namespace LibraryWebAPI.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    [Migration("20231026165944_AddCityidToCustomer")]
-    partial class AddCityidToCustomer
+    [Migration("20231030130228_BackToNullable")]
+    partial class BackToNullable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,7 +39,7 @@ namespace Ratiu_Raul_Lab2.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("City");
+                    b.ToTable("City", (string)null);
                 });
 
             modelBuilder.Entity("Ratiu_Raul_Lab2.Models.Author", b =>
@@ -104,6 +104,7 @@ namespace Ratiu_Raul_Lab2.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("CityID")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     b.Property<string>("Name")

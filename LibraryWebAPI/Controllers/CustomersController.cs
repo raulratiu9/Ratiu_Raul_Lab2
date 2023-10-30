@@ -35,11 +35,8 @@ namespace LibraryWebAPI.Controllers
             {
                 return NotFound();
             }
-            var customer = await _context.Customers.AsNoTracking().FirstOrDefaultAsync(c => c.CustomerID == id);
-            var city = await _context.Cities.AsNoTracking().FirstOrDefaultAsync(c => c.ID == customer.CityID);
+            var customer = await _context.Customers.FindAsync(id);
 
-            customer.City = city;
-            Console.WriteLine(city);
             if (customer == null)
             {
                 return NotFound();
@@ -54,7 +51,6 @@ namespace LibraryWebAPI.Controllers
         public async Task<IActionResult> PutCustomer(int id, Customer customer)
         {
             var city = await _context.Cities.AsNoTracking().FirstOrDefaultAsync(c => customer.CityID == c.ID);
-
             customer.City = city;
             if (id != customer.CustomerID)
             {
@@ -65,6 +61,7 @@ namespace LibraryWebAPI.Controllers
 
             try
             {
+
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -87,9 +84,6 @@ namespace LibraryWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Customer>> PostCustomer(Customer customer)
         {
-            var city = await _context.Cities.AsNoTracking().FirstOrDefaultAsync(c => customer.CityID == c.ID);
-
-            customer.City = city;
             if (_context.Customers == null)
             {
                 return Problem("Entity set 'LibraryContext.Customers'  is null.");
@@ -97,7 +91,7 @@ namespace LibraryWebAPI.Controllers
             _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCustomer", new { id = customer.CustomerID, }, customer);
+            return CreatedAtAction("GetCustomer", new { id = customer.CustomerID }, customer);
         }
 
         // DELETE: api/Customers/5

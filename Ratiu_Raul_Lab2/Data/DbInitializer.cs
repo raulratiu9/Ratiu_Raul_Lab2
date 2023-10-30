@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using LibraryModel.Models;
+using Microsoft.EntityFrameworkCore;
 using Ratiu_Raul_Lab2.Models;
 
 namespace Ratiu_Raul_Lab2.Data
@@ -34,6 +35,32 @@ namespace Ratiu_Raul_Lab2.Data
 
 
                 context.Authors.AddRange(Author1, Author2, Author3);
+
+                if (context.Cities.Any())
+                {
+                    return; // BD a fost creata anterior
+                }
+
+                City City1 = new City
+                {
+                    CityName = "Cluj-Napoca"
+
+                };
+
+                City City2 = new City
+                {
+                    CityName = "Targu Mures",
+
+                };
+
+                City City3 = new City
+                {
+                    CityName = "Oradea"
+
+                };
+
+
+                context.Cities.AddRange(City1, City2, City3);
 
                 context.Books.AddRange(
                     new Book
@@ -79,13 +106,15 @@ namespace Ratiu_Raul_Lab2.Data
                     {
                         Name = "Popescu Marcela",
                         Adress = "Str. Plopilor, nr. 24",
-                        BirthDate = DateTime.Parse("1979-09-01")
+                        BirthDate = DateTime.Parse("1979-09-01"),
+                        CityID = 1
                     },
                     new Customer
                     {
                         Name = "Mihailescu Cornel",
                         Adress = "Str. Bucuresti, nr. 45, ap. 2",
-                        BirthDate = DateTime.Parse("1969 - 07 - 08")
+                        BirthDate = DateTime.Parse("1969 - 07 - 08"),
+                        CityID = 2
                     }
                 );
 

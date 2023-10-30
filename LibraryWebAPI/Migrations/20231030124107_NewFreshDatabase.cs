@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LibraryWebAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateCustomerModel : Migration
+    public partial class NewFreshDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -79,7 +79,7 @@ namespace LibraryWebAPI.Migrations
                 {
                     CustomerID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CityID = table.Column<int>(type: "int", nullable: true),
+                    CityID = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Adress = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -91,7 +91,8 @@ namespace LibraryWebAPI.Migrations
                         name: "FK_Customer_City_CityID",
                         column: x => x.CityID,
                         principalTable: "City",
-                        principalColumn: "ID");
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
