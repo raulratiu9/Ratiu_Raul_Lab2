@@ -15,6 +15,11 @@ namespace Ratiu_Raul_Lab2.Controllers
             _context = context;
         }
 
+        public IActionResult Chat()
+        {
+            return View();
+        }
+
 
         public IActionResult Index()
         {
