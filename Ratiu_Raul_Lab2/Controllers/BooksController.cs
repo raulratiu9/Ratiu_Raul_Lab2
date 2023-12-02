@@ -106,7 +106,7 @@ namespace Ratiu_Raul_Lab2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,AuthorID,Title,Price")] Book book)
         {
-            var authorFullName = _context.Authors.Select(x => x.LastName + " " + x.FirstName);
+            var authorFullName = _context.Authors.Select(x => x.FirstName + " " + x.LastName);
             ViewData["AuthorID"] = new SelectList(authorFullName, book.AuthorID);
             if (ModelState.IsValid)
             {

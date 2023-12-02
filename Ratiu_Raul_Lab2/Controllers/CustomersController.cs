@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Ratiu_Raul_Lab2.Data;
@@ -6,6 +7,7 @@ using Ratiu_Raul_Lab2.Models;
 
 namespace Ratiu_Raul_Lab2.Controllers
 {
+    [Authorize(Policy = "SalesManager")]
     public class CustomersController : Controller
     {
         private readonly LibraryContext _context;

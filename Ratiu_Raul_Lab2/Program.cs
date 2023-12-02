@@ -17,11 +17,26 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
     options.Lockout.MaxFailedAccessAttempts = 3;
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
 })
-    .AddEntityFrameworkStores<IdentityContext>();
+    .AddRoles<IdentityRole>()
+ .AddEntityFrameworkStores<IdentityContext>();
+
+builder.Services.AddAuthorization(opts =>
+{
+    opts.AddPolicy("OnlySales", policy =>
+    {
+        policy.RequireClaim("Department", "Sales");
+    });
+    opts.AddPolicy("SalesManager", policy =>
+    {
+        policy.RequireRole("Manager");
+        policy.RequireClaim("Department", "Sales");
+    });
+});
 
 builder.Services.AddSignalR();
-builder.Services.AddDbContext<IdentityContext>(options =>
+builder.Services.AddRazorPages();
 
+builder.Services.AddDbContext<IdentityContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
