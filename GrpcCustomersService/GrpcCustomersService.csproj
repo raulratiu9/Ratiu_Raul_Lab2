@@ -4,23 +4,27 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>7824f544-d28c-4cb8-bb21-98e445f360bb</UserSecretsId>
+    <UserSecretsId>ef327c4b-f006-4ab9-90fb-c96fd9b2349d</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <Protobuf Include="Protos\customersCRUD.proto" GrpcServices="Server" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.40.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.12" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.12" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.12" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.12">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.20" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.20">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\LibraryModel\LibraryModel.csproj" />
+    <ProjectReference Include="..\LibraryWebAPI\LibraryWebAPI.csproj" />
   </ItemGroup>
 
 </Project>
